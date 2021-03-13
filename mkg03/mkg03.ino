@@ -1,9 +1,3 @@
-/*  cariparkir REST API , OTAweb update
-    Author: hq_rizqi
-    last modified : 25/02/2021
-    v1.6
-*/
-
 #include <WiFi.h>
 #include <ArduinoJson.h>
 #include "RTClib.h"
@@ -20,7 +14,7 @@ WebServer server(80);
 int flag_first_data = 0;
 int need_to_sleep = 0;
 
-String get_addr = "https://hub.api.myveego.id/lockey/getStatus/1691103880001";
+String get_addr = "https://hub.api.myveego.id/lockey/getStatus/1311703880003";
 String post_addr = "https://hub.api.myveego.id/lockey/postStatus/";
 String data_to_concat ="";
 String booking_command = "";
@@ -71,7 +65,7 @@ RTC_DATA_ATTR int bootCount = 0;
 RTC_DS1307 rtc;
 
 //wifi setup
-const char* host = "1691103880001";
+const char* host = "1311703880003";
 const char* ssid = "cariparkir";
 const char* password = "LockeyV1P";
 
@@ -88,13 +82,13 @@ unsigned long previousTime = 0;//millis buffer
 String state = "1"; //string state to send
 
 //production code
-String imei = "1691103880001";
+String imei = "1311703880003";
 //MKG
-// String latitude = "-6.21743528" ;
-// String longitude = "106.66364";
+String latitude = "-6.21743528" ;
+String longitude = "106.66364";
 //PIK
-String latitude = "-6.108708" ;
-String longitude = "106.740394";
+//String latitude = "-6.108708" ;
+//String longitude = "106.740394";
 
 //addres EEPROM
 int status_lockey_addr = 9;
@@ -196,7 +190,7 @@ void setup_wifi() {
     Serial.println(ssid);
     WiFi.begin(ssid, password);
 
-    IPAddress local_IP(192, 168, 0, 111);
+    IPAddress local_IP(192, 168, 0, 103);
     IPAddress gateway(192, 168, 0, 1);
     IPAddress subnet(255, 255, 255, 0);
     IPAddress primaryDNS(8, 8, 8, 8);   //optional
