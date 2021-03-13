@@ -90,11 +90,11 @@ String state = "1"; //string state to send
 //production code
 String imei = "1311703880005";
 //MKG
-String latitude = "-6.21743528" ;
-String longitude = "106.66364";
+// String latitude = "-6.21743528" ;
+// String longitude = "106.66364";
 //PIK
-//String latitude = "-6.108708" ;
-//String longitude = "106.740394";
+String latitude = "-6.108708" ;
+String longitude = "106.740394";
 
 //addres EEPROM
 int status_lockey_addr = 9;
