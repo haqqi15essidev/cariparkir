@@ -8,6 +8,7 @@
 #include <ESPmDNS.h>
 #include <Update.h>
 int boot_trigger = 0;
+int tone_flag = 0;
 
 WebServer server(80);
 
@@ -87,8 +88,8 @@ String imei = "1311703880002";
 String latitude = "-6.21743528" ;
 String longitude = "106.66364";
 //PIK
-//String latitude = "-6.108708" ;
-//String longitude = "106.740394";
+// String latitude = "-6.108708" ;
+// String longitude = "106.740394";
 
 //addres EEPROM
 int status_lockey_addr = 9;
@@ -190,15 +191,15 @@ void setup_wifi() {
     Serial.println(ssid);
     WiFi.begin(ssid, password);
 
-    IPAddress local_IP(192, 168, 0, 102);
-    IPAddress gateway(192, 168, 0, 1);
-    IPAddress subnet(255, 255, 255, 0);
-    IPAddress primaryDNS(8, 8, 8, 8);   //optional
-    IPAddress secondaryDNS(8, 8, 4, 4); //optional
-    
-  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
-    Serial.println("STA Failed to configure");
-  }
+   IPAddress local_IP(192, 168, 0, 102);
+   IPAddress gateway(192, 168, 0, 1);
+   IPAddress subnet(255, 255, 255, 0);
+   IPAddress primaryDNS(8, 8, 8, 8);   //optional
+   IPAddress secondaryDNS(8, 8, 4, 4); //optional
+   
+ if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
+   Serial.println("STA Failed to configure");
+ }
   
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
@@ -262,7 +263,7 @@ void normal_closing(int flag_tone, String datatype){
     state = "1";
     booking_command = "1";
     command_flag = 0;
-    need_to_sleep = 0;
+    tone_flag = 0;
     end_time = millis();
     parking_duration = (end_time - start_time)/1000;
     publish_data(datatype);
@@ -296,6 +297,7 @@ void wakeup_closing(int flag_tone, String datatype){
     state = "1";
     booking_command = "1";
     command_flag = 0;
+    tone_flag = 0;
     publish_data(datatype);
     delay(100);
     break;
@@ -326,6 +328,7 @@ void overclose_closing(int flag_tone, String datatype){
       stopMovement();
       EEPROM.write(status_lockey_addr, 1);
       state = "1";
+      tone_flag = 0;
       booking_command = "1";
       publish_data(datatype);
       delay(100);
@@ -369,6 +372,7 @@ void opening_alert(){
   }
 
 void opening(){
+  digitalWrite(buzzer,LOW);
   while(1){
   obstacle = distance();
   Serial.print("lm1read: ");
@@ -383,6 +387,7 @@ void opening(){
     EEPROM.write(status_lockey_addr, 0);
     state = "0";
     booking_command = "1";
+    tone_flag = 1;
     start_time = millis();
     publish_data("ao");
     delay(close_time);
@@ -591,6 +596,7 @@ void setup() {
   server.begin();
   
  if(status_lockey == 1){
+    tone_flag = 0;
     if(digitalRead(lm1) == 0 && digitalRead(lm2) == 0){
       Serial.println("normal position wake up");
     }else if(digitalRead(lm1) == 1 && digitalRead(lm2) == 0){
@@ -604,6 +610,7 @@ void setup() {
   
  }else{
   Serial.println("Lockey booked");
+  tone_flag = 1;
  }
  }
 
@@ -652,7 +659,7 @@ void loop() {
      percen_buffer_vbat = percen_vbat;
    }
 
-  if(booking_command == "0" && (digitalRead(lm1) != 1 && digitalRead(lm2) != 1)){
+  if(booking_command == "0"){
       opening();
       command_flag = 1;
   }else{
@@ -683,7 +690,7 @@ void loop() {
                     }
                   }
           }else{
-              if((digitalRead(lm1) != 0 || digitalRead(lm2) != 0) && command_flag == 0){
+              if((digitalRead(lm1) != 0 || digitalRead(lm2) != 0) && command_flag == 0 && !tone_flag){
                 digitalWrite(buzzer, HIGH);
                 Serial.println("buzzering on because vandal and car detected");
               }else{
