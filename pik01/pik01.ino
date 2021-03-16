@@ -23,7 +23,7 @@ int c_restart = 0;
 DynamicJsonDocument doc(1024);
 
 //time local & NTP config
-const char* ntpServer = "id.pool.ntp.org";
+const char* ntpServer = "asia.pool.ntp.org";
 const long  gmtOffset_sec = 3600*7;
 const int   daylightOffset_sec = 3600;
 String time_to_pub = "";
